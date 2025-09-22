@@ -1,7 +1,8 @@
 package com.example.identity_service.configuration;
 
 import com.example.identity_service.entity.User;
-import com.example.identity_service.enums.Role;
+import com.example.identity_service.entity.Role;
+import com.example.identity_service.repository.RoleRepository;
 import com.example.identity_service.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -22,20 +24,21 @@ import java.util.HashSet;
 @Slf4j
 public class ApplicationInitConfig {
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     @Bean
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
             if(userRepository.findByUsername("admin").isEmpty()){
-                var roles = new HashSet<String>();
-                roles.add(Role.ADMIN.name());
+                Role role = roleRepository.findById(("ADMIN")).orElseThrow(() -> new RuntimeException("NOT FOUND ROLE"));
+//                var roles = new HashSet<String>();
+//                roles.add(Role.ADMIN.name());
 
                 User user = User.builder()
                         .username("admin")
                         .password(passwordEncoder.encode("admin"))
-                        .roles(roles)
+                        .roles(new HashSet<>(Set.of(role)))
                         .build();
-
                 userRepository.save(user);
                 log.warn("admin user has been create with default password: admin, please change it");
             }

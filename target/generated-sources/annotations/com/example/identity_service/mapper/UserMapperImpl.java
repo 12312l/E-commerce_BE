@@ -2,7 +2,11 @@ package com.example.identity_service.mapper;
 
 import com.example.identity_service.dto.request.UserCreationRequest;
 import com.example.identity_service.dto.request.UserUpdateRequest;
-import com.example.identity_service.dto.response.UserRespone;
+import com.example.identity_service.dto.response.PermissionResponse;
+import com.example.identity_service.dto.response.RoleResponse;
+import com.example.identity_service.dto.response.UserResponse;
+import com.example.identity_service.entity.Permission;
+import com.example.identity_service.entity.Role;
 import com.example.identity_service.entity.User;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,7 +15,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-12T11:14:42+0700",
+    date = "2025-09-19T11:57:36+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21 (Oracle Corporation)"
 )
 @Component
@@ -27,31 +31,32 @@ public class UserMapperImpl implements UserMapper {
 
         user.username( request.getUsername() );
         user.password( request.getPassword() );
-        user.firstName( request.getFirstName() );
-        user.lastName( request.getLastName() );
+        user.fullname( request.getFullname() );
+        user.gender( request.getGender() );
+        user.gmail( request.getGmail() );
         user.dob( request.getDob() );
 
         return user.build();
     }
 
     @Override
-    public UserRespone toUserRespone(User user) {
+    public UserResponse toUserResponse(User user) {
         if ( user == null ) {
             return null;
         }
 
-        UserRespone.UserResponeBuilder userRespone = UserRespone.builder();
+        UserResponse.UserResponseBuilder userResponse = UserResponse.builder();
 
-        userRespone.id( user.getId() );
-        userRespone.username( user.getUsername() );
-        userRespone.firstName( user.getFirstName() );
-        userRespone.dob( user.getDob() );
-        Set<String> set = user.getRoles();
-        if ( set != null ) {
-            userRespone.roles( new LinkedHashSet<String>( set ) );
-        }
+        userResponse.userId( user.getUserId() );
+        userResponse.username( user.getUsername() );
+        userResponse.fullname( user.getFullname() );
+        userResponse.dob( user.getDob() );
+        userResponse.gmail( user.getGmail() );
+        userResponse.phone( user.getPhone() );
+        userResponse.gender( user.getGender() );
+        userResponse.roles( roleSetToRoleResponseSet( user.getRoles() ) );
 
-        return userRespone.build();
+        return userResponse.build();
     }
 
     @Override
@@ -61,8 +66,62 @@ public class UserMapperImpl implements UserMapper {
         }
 
         user.setPassword( request.getPassword() );
-        user.setFirstName( request.getFirstName() );
-        user.setLastName( request.getLastName() );
+        user.setFullname( request.getFullname() );
+        user.setGender( request.getGender() );
+        user.setPhone( request.getPhone() );
         user.setDob( request.getDob() );
+    }
+
+    protected PermissionResponse permissionToPermissionResponse(Permission permission) {
+        if ( permission == null ) {
+            return null;
+        }
+
+        PermissionResponse.PermissionResponseBuilder permissionResponse = PermissionResponse.builder();
+
+        permissionResponse.name( permission.getName() );
+        permissionResponse.description( permission.getDescription() );
+
+        return permissionResponse.build();
+    }
+
+    protected Set<PermissionResponse> permissionSetToPermissionResponseSet(Set<Permission> set) {
+        if ( set == null ) {
+            return null;
+        }
+
+        Set<PermissionResponse> set1 = new LinkedHashSet<PermissionResponse>( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );
+        for ( Permission permission : set ) {
+            set1.add( permissionToPermissionResponse( permission ) );
+        }
+
+        return set1;
+    }
+
+    protected RoleResponse roleToRoleResponse(Role role) {
+        if ( role == null ) {
+            return null;
+        }
+
+        RoleResponse.RoleResponseBuilder roleResponse = RoleResponse.builder();
+
+        roleResponse.name( role.getName() );
+        roleResponse.description( role.getDescription() );
+        roleResponse.permissions( permissionSetToPermissionResponseSet( role.getPermissions() ) );
+
+        return roleResponse.build();
+    }
+
+    protected Set<RoleResponse> roleSetToRoleResponseSet(Set<Role> set) {
+        if ( set == null ) {
+            return null;
+        }
+
+        Set<RoleResponse> set1 = new LinkedHashSet<RoleResponse>( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );
+        for ( Role role : set ) {
+            set1.add( roleToRoleResponse( role ) );
+        }
+
+        return set1;
     }
 }

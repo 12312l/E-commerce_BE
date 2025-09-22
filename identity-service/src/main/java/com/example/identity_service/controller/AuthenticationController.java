@@ -3,9 +3,8 @@ package com.example.identity_service.controller;
 import com.example.identity_service.dto.request.ApiResponse;
 import com.example.identity_service.dto.request.AuthenticationRequest;
 import com.example.identity_service.dto.request.IntrospectRequest;
-import com.example.identity_service.dto.response.AuthenticationRespone;
-import com.example.identity_service.dto.response.IntrospectRespone;
-import com.example.identity_service.dto.response.UserRespone;
+import com.example.identity_service.dto.response.AuthenticationResponse;
+import com.example.identity_service.dto.response.IntrospectResponse;
 import com.example.identity_service.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
@@ -26,27 +25,27 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    ApiResponse<AuthenticationRespone> authenticationReponse(@RequestBody AuthenticationRequest authenticationRequest) {
-        ApiResponse<AuthenticationRespone> response = new ApiResponse<>();
-        AuthenticationRespone authenticationRespone = authenticationService.authenticate(authenticationRequest);
-        response.setResult(authenticationRespone);
+    ApiResponse<AuthenticationResponse> authenticationReponse(@RequestBody AuthenticationRequest authenticationRequest) {
+        ApiResponse<AuthenticationResponse> response = new ApiResponse<>();
+        AuthenticationResponse authenticationResponse = authenticationService.authenticate(authenticationRequest);
+        response.setResult(authenticationResponse);
 
         return response;
     }
 
     @PostMapping ("/token")
-    ApiResponse<AuthenticationRespone> authenticationResponeApiResponse(@RequestBody AuthenticationRequest request){
+    ApiResponse<AuthenticationResponse> authenticationResponeApiResponse(@RequestBody AuthenticationRequest request){
         var result = authenticationService.authenticate(request);
-        return ApiResponse.<AuthenticationRespone>builder()
+        return ApiResponse.<AuthenticationResponse>builder()
                         .result(result)
                 .build();
     }
 
     @PostMapping ("/introspect")
-    ApiResponse<IntrospectRespone> authenticationResponeApiResponse(@RequestBody IntrospectRequest request)
+    ApiResponse<IntrospectResponse> authenticationResponeApiResponse(@RequestBody IntrospectRequest request)
             throws ParseException, JOSEException {
         var result = authenticationService.introspect(request);
-        return ApiResponse.<IntrospectRespone>builder()
+        return ApiResponse.<IntrospectResponse>builder()
                 .result(result)
                 .build();
     }

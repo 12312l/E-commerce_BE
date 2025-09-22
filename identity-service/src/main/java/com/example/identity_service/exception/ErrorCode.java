@@ -1,31 +1,35 @@
 package com.example.identity_service.exception;
 
+import lombok.Getter;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
+@Getter
 public enum ErrorCode {
-    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception"),
-    INVALID_KEY(1001, "Invalid message key"),
-    USER_EXSISTED(1002, "User exsisted"),
+    UNCATEGORIZED_EXCEPTION(9999, "Uncategorized exception", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_KEY(1001, "Invalid message key", HttpStatus.BAD_REQUEST),
+    USER_EXSISTED(1002, "User exsisted", HttpStatus.BAD_REQUEST),
 
-    USER_NOT_EXSISTED(1005, "User not exsisted"),
-    USERNAME_INVALID(1003, "Username must be at least 3 characters"),
-    INVALID_PASSWORD(1003,"Password must be at least 3 characters"),
+    USER_NOT_EXSISTED(1005, "User not exsisted", HttpStatus.NOT_FOUND),
+    USERNAME_INVALID(1003, "Username must be at least 3 characters", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1003,"Password must be at least 8 characters", HttpStatus.BAD_REQUEST),
 
-    USER_NOTFOUND(1004, "User not found"),
-    UNAUTHENTICATED(1006, "Unauthenticated");
+    USER_NOTFOUND(1004, "User not found", HttpStatus.NOT_FOUND),
+    UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1007, "Khong co quyen truy cap", HttpStatus.FORBIDDEN),
     ;
+
 
     private int code;
     private String message;
 
-    ErrorCode(int code, String message) {
+    private HttpStatusCode statusCode;
+
+    ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;
         this.message = message;
+        this.statusCode = statusCode;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

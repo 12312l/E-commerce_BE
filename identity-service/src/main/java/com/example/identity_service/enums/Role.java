@@ -4,3 +4,6 @@ public enum Role {
     ADMIN,
     USER
 }
+
+//user -> many role
+//role -> many permission
