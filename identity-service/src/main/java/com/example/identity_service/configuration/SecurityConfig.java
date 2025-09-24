@@ -1,6 +1,7 @@
 package com.example.identity_service.configuration;
 
 import com.example.identity_service.enums.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,7 @@ public class SecurityConfig {
             "/auth/token",
             "/auth/login",
             "/auth/introspect",
+            "/auth/logout"
     };
 
     private static final String[] SWAGGER_ENDPOINTS = {
@@ -54,8 +56,8 @@ public class SecurityConfig {
             "/identity/images/**"
     };
 
-    @Value("${jwt.signerKey}")
-    private String signerKey;
+    @Autowired
+    CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
@@ -71,7 +73,7 @@ public class SecurityConfig {
                 )
                 .oauth2ResourceServer(oauth2 ->
                         oauth2.jwt(jwtConfigurer ->
-                            jwtConfigurer.decoder(jwtDecoder())
+                            jwtConfigurer.decoder(customJwtDecoder)
                                     .jwtAuthenticationConverter(jwtAuthenticationConverter())) // 👈 custom converter)
                                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
 
@@ -94,14 +96,6 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HmacSHA512");
-        return NimbusJwtDecoder
-                .withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512)
-                .build();
-    }
 
     // Custom converter: đọc claim "scope"
     @Bean

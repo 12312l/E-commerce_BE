@@ -41,10 +41,9 @@ public class UserService {
     UserMapper userMapper;
     public User createUser(UserCreationRequest request){
         if (userRepository.existsByUsername(request.getUsername()))
-            throw new RuntimeException("ErrorCode.USER_EXSISTED");
+            throw new AppException(ErrorCode.USER_EXSISTED);
 
         User user = userMapper.toUser(request);
-//        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 
@@ -71,7 +70,7 @@ public class UserService {
     //lay user theo id
     @PostAuthorize("returnObject.username== authentication.name")
     public UserResponse getUser(Long userId){
-        return userMapper.toUserResponse(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("ErrorCode.USER_NOTFOUND")));
+        return userMapper.toUserResponse(userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND)));
     }
 
     //my-info
@@ -86,7 +85,7 @@ public class UserService {
     }
 
     public UserResponse updateUser(Long id, UserUpdateRequest request){
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("ErrorCode.USER_NOTFOUND"));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
 
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

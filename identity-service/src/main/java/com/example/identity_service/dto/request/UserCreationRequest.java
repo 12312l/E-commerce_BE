@@ -1,5 +1,6 @@
 package com.example.identity_service.dto.request;
 
+import com.example.identity_service.validator.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -20,7 +21,7 @@ public class UserCreationRequest {
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
 
-    @Size(min =2, max = 50, message = "Tên tối thiểu từ 2 đến 50 ký tự")
+    @Size(min =2, max = 50, message = "INVALID_FULLNAME")
     @Pattern(regexp = "^[\\p{L} ]+$", message = "Tên chỉ được chứa chữ cái và khoảng trắng")
     String fullname;
 
@@ -33,6 +34,7 @@ public class UserCreationRequest {
             message = "Email không hợp lệ"
     )
     String gmail;
-    @NotNull(message = "Vui lòng chọn ngày sinh!")
+
+    @DobConstraint(min = 16, message = "INVALID_DOB")
     LocalDate dob;
 }
