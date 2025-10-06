@@ -1,8 +1,8 @@
 package com.example.identity_service.configuration;
 
-import com.example.identity_service.enums.Role;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -10,13 +10,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -24,37 +19,25 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
     private final String[] PUBLIC_ENDPOINTS = {
-            "/users",
-            "/auth/token",
-            "/auth/login",
-            "/auth/introspect",
-            "/auth/logout"
+        "/users", "/auth/token", "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
 
     private static final String[] SWAGGER_ENDPOINTS = {
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/api-docs/**",
-            "/docs",
-            "/identity/api-docs",
-            "/identity/docs"
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/api-docs/**",
+        "/docs",
+        "/identity/api-docs",
+        "/identity/docs"
     };
 
-    private static final String[] STATIC_RESOURCES = {
-            "/images/**",
-            "/identity/images/**"
-    };
+    private static final String[] STATIC_RESOURCES = {"/images/**", "/identity/images/**"};
 
     @Autowired
     CustomJwtDecoder customJwtDecoder;
@@ -64,20 +47,18 @@ public class SecurityConfig {
         httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request ->
-                        request
-                                .requestMatchers(SWAGGER_ENDPOINTS).permitAll()
-                                .requestMatchers(STATIC_RESOURCES).permitAll()
-                                .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                                .anyRequest().authenticated()
-                )
-                .oauth2ResourceServer(oauth2 ->
-                        oauth2.jwt(jwtConfigurer ->
-                            jwtConfigurer.decoder(customJwtDecoder)
-                                    .jwtAuthenticationConverter(jwtAuthenticationConverter())) // 👈 custom converter)
-                                .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-
-                        );
+                .authorizeHttpRequests(request -> request.requestMatchers(SWAGGER_ENDPOINTS)
+                        .permitAll()
+                        .requestMatchers(STATIC_RESOURCES)
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
+                                .decoder(customJwtDecoder)
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())) // 👈 custom converter)
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
@@ -96,7 +77,6 @@ public class SecurityConfig {
         return source;
     }
 
-
     // Custom converter: đọc claim "scope"
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
@@ -105,7 +85,7 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        return  jwtAuthenticationConverter;
+        return jwtAuthenticationConverter;
     }
 
     @Bean

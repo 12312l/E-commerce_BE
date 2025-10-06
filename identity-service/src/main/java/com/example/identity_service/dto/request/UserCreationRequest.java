@@ -1,27 +1,29 @@
 package com.example.identity_service.dto.request;
 
-import com.example.identity_service.validator.DobConstraint;
+import java.time.LocalDate;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import com.example.identity_service.validator.DobConstraint;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @Size(min =3, message = "USERNAME_INVALID")
+    @Size(min = 3, message = "USERNAME_INVALID")
     String username;
 
     @Size(min = 8, message = "INVALID_PASSWORD")
     String password;
 
-    @Size(min =2, max = 50, message = "INVALID_FULLNAME")
+    @Size(min = 2, max = 50, message = "INVALID_FULLNAME")
     @Pattern(regexp = "^[\\p{L} ]+$", message = "Tên chỉ được chứa chữ cái và khoảng trắng")
     String fullname;
 
@@ -29,10 +31,7 @@ public class UserCreationRequest {
     String gender;
 
     @NotBlank(message = "Email không được để trống")
-    @Pattern(
-            regexp = "^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$",
-            message = "Email không hợp lệ"
-    )
+    @Pattern(regexp = "^[\\w._%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$", message = "Email không hợp lệ")
     String gmail;
 
     @DobConstraint(min = 16, message = "INVALID_DOB")

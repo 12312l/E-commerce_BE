@@ -1,5 +1,3 @@
 package com.example.identity_service.dto;
 
-public class UserDTO {
-
-}
+public class UserDTO {}

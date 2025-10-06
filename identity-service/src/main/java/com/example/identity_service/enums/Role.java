@@ -5,5 +5,5 @@ public enum Role {
     USER
 }
 
-//user -> many role
-//role -> many permission
+// user -> many role
+// role -> many permission

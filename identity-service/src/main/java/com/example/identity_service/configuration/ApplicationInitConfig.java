@@ -1,22 +1,22 @@
 package com.example.identity_service.configuration;
 
-import com.example.identity_service.entity.User;
-import com.example.identity_service.entity.Role;
-import com.example.identity_service.repository.RoleRepository;
-import com.example.identity_service.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.example.identity_service.entity.Role;
+import com.example.identity_service.entity.User;
+import com.example.identity_service.repository.RoleRepository;
+import com.example.identity_service.repository.UserRepository;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,12 +27,13 @@ public class ApplicationInitConfig {
     RoleRepository roleRepository;
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository){
+    ApplicationRunner applicationRunner(UserRepository userRepository) {
         return args -> {
-            if(userRepository.findByUsername("admin").isEmpty()){
-                Role role = roleRepository.findById(("ADMIN")).orElseThrow(() -> new RuntimeException("NOT FOUND ROLE"));
-//                var roles = new HashSet<String>();
-//                roles.add(Role.ADMIN.name());
+            if (userRepository.findByUsername("admin").isEmpty()) {
+                Role role =
+                        roleRepository.findById(("ADMIN")).orElseThrow(() -> new RuntimeException("NOT FOUND ROLE"));
+                //                var roles = new HashSet<String>();
+                //                roles.add(Role.ADMIN.name());
 
                 User user = User.builder()
                         .username("admin")
