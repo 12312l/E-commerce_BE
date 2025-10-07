@@ -3,9 +3,11 @@ package com.example.identity_service.dto.request;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.identity_service.validator.DobConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,17 +17,18 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    String password;
+//    String password;
+    @Size(min = 2, max = 50, message = "INVALID_FULLNAME")
+    @Pattern(regexp = "^[\\p{L} ]+$", message = "Tên chỉ được chứa chữ cái và khoảng trắng")
     String fullname;
 
-    @NotBlank(message = "Số điện thoại không được để trống!")
-    @Pattern(
-            regexp = "^(0[1-9])[0-9]{8,9}$",
-            message = "Số điện thoại không hợp lệ! (Phải bắt đầu bằng 0 và có 10-11 số)")
+
     String phone;
 
     String gender;
+
+    @DobConstraint(min = 16, message = "INVALID_DOB")
     LocalDate dob;
 
-    List<String> roles;
+//    List<String> roles;
 }

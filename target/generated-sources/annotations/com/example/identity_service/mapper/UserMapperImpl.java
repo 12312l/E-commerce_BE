@@ -1,6 +1,7 @@
 package com.example.identity_service.mapper;
 
 import com.example.identity_service.dto.request.UserCreationRequest;
+import com.example.identity_service.dto.request.UserPasswordRequest;
 import com.example.identity_service.dto.request.UserUpdateRequest;
 import com.example.identity_service.dto.response.PermissionResponse;
 import com.example.identity_service.dto.response.RoleResponse;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-09-30T03:12:56+0700",
+    date = "2025-10-07T01:56:52+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21 (Oracle Corporation)"
 )
 @Component
@@ -65,11 +66,19 @@ public class UserMapperImpl implements UserMapper {
             return;
         }
 
-        user.setPassword( request.getPassword() );
         user.setFullname( request.getFullname() );
         user.setGender( request.getGender() );
         user.setPhone( request.getPhone() );
         user.setDob( request.getDob() );
+    }
+
+    @Override
+    public void updateUserPassword(User user, UserPasswordRequest request) {
+        if ( request == null ) {
+            return;
+        }
+
+        user.setPassword( request.getPassword() );
     }
 
     protected PermissionResponse permissionToPermissionResponse(Permission permission) {

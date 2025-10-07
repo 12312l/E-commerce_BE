@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.identity_service.dto.request.UserPasswordRequest;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -82,14 +83,24 @@ public class UserService {
 
     public UserResponse updateUser(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
-
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        var role = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>((role)));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
+
+    public UserResponse updateUserPassword(Long id, UserPasswordRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_INCORRECT);
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+
+        return userMapper.toUserResponse(userRepository.save(user));
+    }
+
 
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);

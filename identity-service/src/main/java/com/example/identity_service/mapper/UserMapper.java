@@ -1,5 +1,6 @@
 package com.example.identity_service.mapper;
 
+import com.example.identity_service.dto.request.UserPasswordRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -17,4 +18,6 @@ public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    void updateUserPassword(@MappingTarget User user, UserPasswordRequest request);
 }

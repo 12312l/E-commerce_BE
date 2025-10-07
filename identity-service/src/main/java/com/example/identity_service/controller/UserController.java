@@ -2,6 +2,7 @@ package com.example.identity_service.controller;
 
 import java.util.List;
 
+import com.example.identity_service.dto.request.UserPasswordRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -69,8 +70,17 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequest request) {
-        return userService.updateUser(userId, request);
+    ApiResponse<UserResponse> updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateUser(userId, request))
+                .build();
+    }
+
+    @PutMapping("/update/password/{userId}")
+    ApiResponse<UserResponse> updatePasswordUser(@PathVariable Long userId, @RequestBody UserPasswordRequest request){
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.updateUserPassword(userId, request))
+                .build();
     }
 
     @DeleteMapping("/{userId}")
