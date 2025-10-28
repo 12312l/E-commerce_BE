@@ -20,7 +20,9 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     INVALID_DOB(1008, "Your age must be as least {min}", HttpStatus.BAD_REQUEST),
-    PASSWORD_INCORRECT(1011, "Password incorrect", HttpStatus.BAD_REQUEST)
+    PASSWORD_INCORRECT(1011, "Password incorrect", HttpStatus.BAD_REQUEST),
+
+    ADDRESS_NOTFOUND(2001, "Address not found", HttpStatus.NOT_FOUND),
     ;
 
     private int code;

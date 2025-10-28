@@ -48,10 +48,6 @@ public class UserService {
 
         Role role = roleRepository.findById("USER").orElseThrow(() -> new RuntimeException("Not found Rolde"));
         user.setRoles(new HashSet<>(Set.of(role)));
-        //        HashSet<String> roles = new HashSet<>();
-        //        roles.add(Role.USER.name());
-        //
-        //        user.setRoles(roles);
 
         return userRepository.save(user);
     }

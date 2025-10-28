@@ -106,6 +106,8 @@ public class AuthenticationService {
                         Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(userResponse)) // 👈 đổi sang scope
+                .claim("userId", userResponse.getUserId()) // 👈 thêm userId vào claim
+
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -196,7 +198,6 @@ public class AuthenticationService {
         if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID())) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-
         return signedJWT;
     }
 }
