@@ -27,6 +27,10 @@ public class SecurityConfig {
         "/users", "/auth/token", "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh"
     };
 
+    private final String[] PUBLIC_ENDPOINT_GET = {
+            "/category/**", "/genres/**"
+    };
+
     private static final String[] SWAGGER_ENDPOINTS = {
         "/v3/api-docs/**",
         "/swagger-ui/**",
@@ -52,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers(STATIC_RESOURCES)
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINT_GET)
                         .permitAll()
                         .anyRequest()
                         .authenticated())

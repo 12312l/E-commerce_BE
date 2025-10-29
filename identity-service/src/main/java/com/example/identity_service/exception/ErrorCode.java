@@ -23,6 +23,15 @@ public enum ErrorCode {
     PASSWORD_INCORRECT(1011, "Password incorrect", HttpStatus.BAD_REQUEST),
 
     ADDRESS_NOTFOUND(2001, "Address not found", HttpStatus.NOT_FOUND),
+
+
+    //Category
+    CATEGORY_NOTFOUND(3001, "Category not found", HttpStatus.NOT_FOUND),
+
+
+    //Genres
+    GENRES_NOTFOUND(4001, "Genres not found", HttpStatus.NOT_FOUND)
+
     ;
 
     private int code;
