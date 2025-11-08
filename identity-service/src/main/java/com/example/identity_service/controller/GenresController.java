@@ -37,7 +37,4 @@ public class GenresController {
                 .result(genresService.getGenresById(id))
                 .build();
     }
-
-
-
 }

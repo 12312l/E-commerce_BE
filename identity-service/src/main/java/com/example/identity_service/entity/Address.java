@@ -18,7 +18,7 @@ import java.util.Set;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long addressId;
+    long addressId;
 
     String fullname;
     String phone;
