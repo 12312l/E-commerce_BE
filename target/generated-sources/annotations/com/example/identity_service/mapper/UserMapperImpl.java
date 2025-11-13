@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-10-07T01:56:52+0700",
+    date = "2025-11-13T10:54:24+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21 (Oracle Corporation)"
 )
 @Component
@@ -77,8 +77,6 @@ public class UserMapperImpl implements UserMapper {
         if ( request == null ) {
             return;
         }
-
-        user.setPassword( request.getPassword() );
     }
 
     protected PermissionResponse permissionToPermissionResponse(Permission permission) {

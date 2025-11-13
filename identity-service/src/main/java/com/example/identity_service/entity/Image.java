@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 @Entity
 public class Image {
     @Id
@@ -16,6 +17,8 @@ public class Image {
     Long imageId;
 
     String filePath;
+
+    String url;
 
     String name;
 

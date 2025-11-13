@@ -30,8 +30,11 @@ public enum ErrorCode {
 
 
     //Genres
-    GENRES_NOTFOUND(4001, "Genres not found", HttpStatus.NOT_FOUND)
+    GENRES_NOTFOUND(4001, "Genres not found", HttpStatus.NOT_FOUND),
 
+
+    //Product
+    PRODUCT_NOTFOUND(5001, "Không tìm thấy sản phẩm!", HttpStatus.NOT_FOUND)
     ;
 
     private int code;

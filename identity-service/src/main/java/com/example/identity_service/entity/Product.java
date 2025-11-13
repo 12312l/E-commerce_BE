@@ -37,10 +37,6 @@ public class Product {
     @JoinColumn(name = "genresId", nullable = false)
     Genres genres;
 
-    @ManyToOne
-    @JoinColumn(name = "orderId", nullable = false)
-    Order order;
-
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     List<ProductVariant> variants = new ArrayList<>();
 

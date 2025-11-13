@@ -28,7 +28,7 @@ public class SecurityConfig {
     };
 
     private final String[] PUBLIC_ENDPOINT_GET = {
-            "/category/**", "/genres/**"
+            "/category/**", "/genres/**", "/product/**"
     };
 
     private static final String[] SWAGGER_ENDPOINTS = {
@@ -38,7 +38,7 @@ public class SecurityConfig {
         "/api-docs/**",
         "/docs",
         "/identity/api-docs",
-        "/identity/docs"
+        "/identity/docs",
     };
 
     private static final String[] STATIC_RESOURCES = {"/images/**", "/identity/images/**"};

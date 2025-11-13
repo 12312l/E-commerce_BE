@@ -22,6 +22,8 @@ public class OrderDetail {
 
     String color;
 
+    Double price; // ✅ thêm nếu bạn muốn lưu giá tại thời điểm mua (tránh thay đổi theo giá gốc)
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "variantId", nullable = false)
     ProductVariant productVariant;
