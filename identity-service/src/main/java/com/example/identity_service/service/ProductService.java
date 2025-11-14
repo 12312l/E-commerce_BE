@@ -1,6 +1,8 @@
 package com.example.identity_service.service;
 
+import com.example.identity_service.dto.request.PriceFilterRequest;
 import com.example.identity_service.dto.response.ProductResponse;
+import com.example.identity_service.entity.Product;
 import com.example.identity_service.exception.AppException;
 import com.example.identity_service.exception.ErrorCode;
 import com.example.identity_service.mapper.ProductMapper;
@@ -32,11 +34,37 @@ public class ProductService {
         return productMapper.toProductResponse(productReponsitory.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND)));
     }
 
+    public List<ProductResponse> getNewProduct() {
+        return productReponsitory.findAllByOrderByCreateAtDesc()
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
 
 
-//    public List<ProductResponse> findProductFromKeyword(String keyword){
-//
-//    }
+
+    public List<ProductResponse> searchProduct(String keyword){
+        if(keyword ==null || keyword.trim().isEmpty()){
+            return List.of();
+        }
+
+        return productReponsitory.searchProducts(keyword.trim())
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
+    //Filter following by price product
+    public List<ProductResponse> filterByPrice(PriceFilterRequest priceFilterRequest){
+        if(priceFilterRequest.getProductIds() == null || priceFilterRequest.getProductIds().isEmpty()){
+            return List.of();
+        }
+
+        return productReponsitory.filterByPrice(priceFilterRequest.getProductIds(), priceFilterRequest.getMinPrice(), priceFilterRequest.getMaxPrice())
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
 
 
 }
