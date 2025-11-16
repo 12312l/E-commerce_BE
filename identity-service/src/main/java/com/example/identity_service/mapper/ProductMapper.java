@@ -1,6 +1,7 @@
 package com.example.identity_service.mapper;
 
 import com.example.identity_service.dto.response.ColorResponse;
+import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.dto.response.ProductVariantResponse;
 import com.example.identity_service.entity.*;
@@ -15,6 +16,10 @@ public interface ProductMapper {
     @Mapping(target = "variants", source = "variants")
     @Mapping(target = "productId", source = "productId")
     ProductResponse toProductResponse(Product product);
+
+    @Mapping(target = "variants", source = "variants")
+    @Mapping(target = "productId", source = "productId")
+    ProductDetailResponse toProductDetailResponse(Product product);
 
     @Mapping(target = "color", source = "color") // chỉ cần source = color
     @Mapping(target = "sizes", expression = "java(mapSizes(variant.getProductSizes()))")

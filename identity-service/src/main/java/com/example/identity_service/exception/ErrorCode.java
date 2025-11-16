@@ -34,7 +34,15 @@ public enum ErrorCode {
 
 
     //Product
-    PRODUCT_NOTFOUND(5001, "Không tìm thấy sản phẩm!", HttpStatus.NOT_FOUND)
+    PRODUCT_NOTFOUND(5001, "Không tìm thấy sản phẩm!", HttpStatus.NOT_FOUND),
+
+
+    //ProductVariant
+    VARIANT_NOT_FOUND(6001, "Không tìm thấy phiên bản sản phẩm", HttpStatus.NOT_FOUND),
+
+    //Cart
+    CART_NOT_EXSISTED(7001, "Không có sản phẩm nào trong giỏ hàng", HttpStatus.NOT_FOUND),
+    INVALID_ACTION(7002, "Hành động không hợp lệ", HttpStatus.BAD_REQUEST);
     ;
 
     private int code;

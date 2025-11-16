@@ -2,6 +2,7 @@ package com.example.identity_service.controller;
 
 import com.example.identity_service.dto.request.ApiResponse;
 import com.example.identity_service.dto.request.PriceFilterRequest;
+import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.service.ProductService;
 import lombok.AccessLevel;
@@ -33,6 +34,13 @@ public class ProductController {
     ApiResponse<ProductResponse> getProductById(@RequestParam("productId") Long id) {
         return ApiResponse.<ProductResponse>builder()
                 .result(productService.getProductById(id))
+                .build();
+    }
+
+    @GetMapping("/{productId}/detail")
+    ApiResponse<ProductDetailResponse> getProductDetailById(@RequestParam("productId") Long id){
+        return ApiResponse.<ProductDetailResponse>builder()
+                .result(productService.getProductDetailById(id))
                 .build();
     }
 

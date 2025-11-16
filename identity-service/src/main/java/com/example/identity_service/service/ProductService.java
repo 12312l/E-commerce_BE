@@ -1,6 +1,7 @@
 package com.example.identity_service.service;
 
 import com.example.identity_service.dto.request.PriceFilterRequest;
+import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.entity.Product;
 import com.example.identity_service.exception.AppException;
@@ -32,6 +33,11 @@ public class ProductService {
 
     public ProductResponse getProductById(Long id){
         return productMapper.toProductResponse(productReponsitory.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND)));
+    }
+
+    public ProductDetailResponse getProductDetailById(Long id) {
+        Product product = productReponsitory.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND));
+        return productMapper.toProductDetailResponse(product);
     }
 
     public List<ProductResponse> getNewProduct() {

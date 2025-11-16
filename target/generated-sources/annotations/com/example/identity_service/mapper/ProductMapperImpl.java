@@ -1,5 +1,6 @@
 package com.example.identity_service.mapper;
 
+import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.dto.response.ProductVariantResponse;
 import com.example.identity_service.entity.Product;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-13T10:54:24+0700",
+    date = "2025-11-15T09:42:23+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21 (Oracle Corporation)"
 )
 @Component
@@ -32,6 +33,26 @@ public class ProductMapperImpl implements ProductMapper {
         productResponse.discountPercent( product.getDiscountPercent() );
 
         return productResponse.build();
+    }
+
+    @Override
+    public ProductDetailResponse toProductDetailResponse(Product product) {
+        if ( product == null ) {
+            return null;
+        }
+
+        ProductDetailResponse.ProductDetailResponseBuilder productDetailResponse = ProductDetailResponse.builder();
+
+        productDetailResponse.variants( productVariantListToProductVariantResponseList( product.getVariants() ) );
+        productDetailResponse.productId( product.getProductId() );
+        productDetailResponse.name( product.getName() );
+        productDetailResponse.material( product.getMaterial() );
+        productDetailResponse.description( product.getDescription() );
+        productDetailResponse.instruction( product.getInstruction() );
+        productDetailResponse.price( product.getPrice() );
+        productDetailResponse.discountPercent( product.getDiscountPercent() );
+
+        return productDetailResponse.build();
     }
 
     @Override
