@@ -39,10 +39,17 @@ public enum ErrorCode {
 
     //ProductVariant
     VARIANT_NOT_FOUND(6001, "Không tìm thấy phiên bản sản phẩm", HttpStatus.NOT_FOUND),
+    VARIANT_DUPLICATE(6002, "Phiên bản sản phẩm đã tồn tại", HttpStatus.BAD_REQUEST),
 
     //Cart
     CART_NOT_EXSISTED(7001, "Không có sản phẩm nào trong giỏ hàng", HttpStatus.NOT_FOUND),
-    INVALID_ACTION(7002, "Hành động không hợp lệ", HttpStatus.BAD_REQUEST);
+    INVALID_ACTION(7002, "Hành động không hợp lệ", HttpStatus.BAD_REQUEST),
+
+    //color
+    COLOR_NOTFOUND(8001, "Không tìm thấy màu", HttpStatus.BAD_REQUEST);
+
+
+    ;
     ;
 
     private int code;
