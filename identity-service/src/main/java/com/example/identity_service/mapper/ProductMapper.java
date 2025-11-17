@@ -1,5 +1,6 @@
 package com.example.identity_service.mapper;
 
+import com.example.identity_service.dto.request.ProductRequest;
 import com.example.identity_service.dto.response.ColorResponse;
 import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
@@ -13,6 +14,8 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = {ColorMapper.class})
 public interface ProductMapper {
+    Product toProduct(ProductRequest productRequest);
+
     @Mapping(target = "variants", source = "variants")
     @Mapping(target = "productId", source = "productId")
     ProductResponse toProductResponse(Product product);

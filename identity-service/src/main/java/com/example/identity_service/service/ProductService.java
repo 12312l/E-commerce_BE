@@ -1,12 +1,15 @@
 package com.example.identity_service.service;
 
 import com.example.identity_service.dto.request.PriceFilterRequest;
+import com.example.identity_service.dto.request.ProductRequest;
 import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
+import com.example.identity_service.entity.Genres;
 import com.example.identity_service.entity.Product;
 import com.example.identity_service.exception.AppException;
 import com.example.identity_service.exception.ErrorCode;
 import com.example.identity_service.mapper.ProductMapper;
+import com.example.identity_service.repository.GenresRepository;
 import com.example.identity_service.repository.ProductReponsitory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +28,29 @@ public class ProductService {
 
     ProductMapper productMapper;
 
+    GenresRepository genresRepository;
+
+    public ProductResponse createProduct(ProductRequest productRequest){
+        Genres genre = genresRepository.findById(productRequest.getGenresId())
+                .orElseThrow(() -> new AppException(ErrorCode.GENRES_NOTFOUND));
+
+        Product product = productMapper.toProduct(productRequest);
+
+        product.setGenres(genre);
+
+
+        return productMapper.toProductResponse(productReponsitory.save(product));
+    }
+
     public List<ProductResponse> getAllProduct(){
         return productReponsitory.findAll()
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getProductByGenresId(Long genresId){
+        return productReponsitory.findAllByGenres_GenresId(genresId)
                 .stream()
                 .map(productMapper::toProductResponse)
                 .toList();

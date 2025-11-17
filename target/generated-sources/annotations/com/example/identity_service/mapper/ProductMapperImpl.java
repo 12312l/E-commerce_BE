@@ -1,5 +1,6 @@
 package com.example.identity_service.mapper;
 
+import com.example.identity_service.dto.request.ProductRequest;
 import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.dto.response.ProductVariantResponse;
@@ -12,11 +13,29 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-15T09:42:23+0700",
+    date = "2025-11-17T15:55:12+0700",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 21 (Oracle Corporation)"
 )
 @Component
 public class ProductMapperImpl implements ProductMapper {
+
+    @Override
+    public Product toProduct(ProductRequest productRequest) {
+        if ( productRequest == null ) {
+            return null;
+        }
+
+        Product product = new Product();
+
+        product.setName( productRequest.getName() );
+        product.setMaterial( productRequest.getMaterial() );
+        product.setDescription( productRequest.getDescription() );
+        product.setInstruction( productRequest.getInstruction() );
+        product.setPrice( productRequest.getPrice() );
+        product.setDiscountPercent( productRequest.getDiscountPercent() );
+
+        return product;
+    }
 
     @Override
     public ProductResponse toProductResponse(Product product) {

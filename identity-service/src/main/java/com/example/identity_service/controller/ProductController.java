@@ -2,6 +2,7 @@ package com.example.identity_service.controller;
 
 import com.example.identity_service.dto.request.ApiResponse;
 import com.example.identity_service.dto.request.PriceFilterRequest;
+import com.example.identity_service.dto.request.ProductRequest;
 import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.service.ProductService;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,10 +25,26 @@ import java.util.List;
 public class ProductController {
     ProductService productService;
 
+
+    @PostMapping("/add-product")
+    @PreAuthorize("hasRole('ADMIN')")
+    ApiResponse<ProductResponse> addProduct(ProductRequest productRequest){
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.createProduct(productRequest))
+                .build();
+    }
+
     @GetMapping
     ApiResponse<List<ProductResponse>> getAllProduct(){
         return ApiResponse.<List<ProductResponse>>builder()
                 .result(productService.getAllProduct())
+                .build();
+    }
+
+    @GetMapping("/genres/{genresId}")
+    ApiResponse<List<ProductResponse>> getProductByGenresId(@PathVariable("genresId") Long genresId){
+        return ApiResponse.<List<ProductResponse>>builder()
+                .result(productService.getProductByGenresId(genresId))
                 .build();
     }
 

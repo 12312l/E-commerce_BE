@@ -21,4 +21,6 @@ public interface ProductReponsitory extends JpaRepository<Product, Long> {
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice
     );
+
+    List<Product> findAllByGenres_GenresId(Long id);
 }
