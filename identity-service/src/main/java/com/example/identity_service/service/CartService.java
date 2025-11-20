@@ -17,11 +17,12 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.Duration;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +34,9 @@ public class CartService {
     UserRepository userRepository;
 
     ProductVariantRepository productVariantRepository;
+
+    RedisTemplate<String, Object> redisTemplate;
+    String KEY_PREFIX = "guest:cart:";
 
     @Transactional
     public CartResponse addCart(CartRequest cartRequest){
@@ -110,4 +114,93 @@ public class CartService {
         cart.setTotalPrice(cart.getProductVariant().getProduct().getPrice()* quantity);
         return cartMapper.toCartResponse(cartRepository.save(cart));
     }
+
+    private String buildKey(String guestId) {
+        return KEY_PREFIX + guestId;
+    }
+
+    private void saveCart(String guestId, List<CartRequest> items) {
+        redisTemplate.opsForValue().set(buildKey(guestId), items, Duration.ofDays(7));
+    }
+
+    public List<CartRequest> getGuestCart(String guestId) {
+        Object data = redisTemplate.opsForValue().get(buildKey(guestId));
+        if (data == null) return new ArrayList<>();
+        return (List<CartRequest>) data;
+    }
+
+    public List<CartRequest> addGuestCart(String guestId, CartRequest request) {
+        List<CartRequest> cart = getGuestCart(guestId);
+
+        Optional<CartRequest> exist = cart.stream()
+                .filter(i -> i.getVariantId().equals(request.getVariantId())
+                        && i.getSize().equals(request.getSize()))
+                .findFirst();
+
+        if (exist.isPresent()) {
+            exist.get().setQuantity(exist.get().getQuantity() + request.getQuantity());
+        } else {
+            cart.add(request);
+        }
+
+        saveCart(guestId, cart);
+        return cart;
+    }
+
+    public List<CartResponse> convertGuestCart(String guestId) {
+        List<CartRequest> items = getGuestCart(guestId);
+        Map<String, CartResponse> mergedMap = new HashMap<>();
+
+        for (CartRequest item : items) {
+            ProductVariant variant = productVariantRepository.findById(item.getVariantId())
+                    .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND));
+
+            double price = variant.getProduct().getPrice();
+
+            // KEY định danh 1 hàng trong giỏ: variantId + size
+            String key = item.getVariantId() + "_" + item.getSize();
+
+            if (mergedMap.containsKey(key)) {
+                // Nếu tồn tại → cộng dồn số lượng
+                CartResponse existing = mergedMap.get(key);
+
+                int newQuantity = existing.getQuantity() + item.getQuantity();
+                existing.setQuantity(newQuantity);
+                existing.setTotalPrice(price * newQuantity);
+
+            } else {
+                // Nếu chưa có → tạo mới
+                CartResponse response = CartResponse.builder()
+                        .cartId(null)
+                        .userId(null)
+                        .variantId(item.getVariantId())
+                        .size(item.getSize())
+                        .quantity(item.getQuantity())
+                        .totalPrice(price * item.getQuantity())
+
+                        .productId(variant.getProduct().getProductId())
+                        .productName(variant.getProduct().getName())
+                        .productPrice(String.valueOf(price))
+                        .colorName(variant.getColor().getName())
+
+                        .urlImage(
+                                !variant.getImages().isEmpty()
+                                        ? variant.getImages().get(0).getUrl()
+                                        : null
+                        )
+
+                        .build();
+
+                mergedMap.put(key, response);
+            }
+        }
+
+        // Trả về list sau khi merge xong
+        return new ArrayList<>(mergedMap.values());
+    }
+
+
+
+
+
 }

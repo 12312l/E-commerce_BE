@@ -30,11 +30,15 @@ public class SecurityConfig {
             "/auth/introspect",
             "/auth/logout",
             "/auth/refresh",
-            "/product/filterPrice"
+            "/product/filterPrice",
+            "/cart/guest/**"
     };
 
     private final String[] PUBLIC_ENDPOINT_GET = {
-            "/category/**", "/genres/**", "/product/**"
+            "/category/**",
+            "/genres/**",
+            "/product/**",
+            "/cart/guest/**"
     };
 
     private static final String[] SWAGGER_ENDPOINTS = {

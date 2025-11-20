@@ -45,6 +45,21 @@ public class CartController {
                 .build();
     }
 
+    @GetMapping("/guest/{guestId}")
+    public ApiResponse<List<CartResponse>> getGuestCart(@PathVariable String guestId) {
+        return ApiResponse.<List<CartResponse>>builder()
+                .result(cartService.convertGuestCart(guestId))
+                .build();
+    }
 
+    @PostMapping("/guest/{guestId}")
+    public ApiResponse<List<CartRequest>> addGuestCart(
+            @PathVariable String guestId,
+            @RequestBody CartRequest request
+    ) {
+        return ApiResponse.<List<CartRequest>>builder()
+                .result(cartService.addGuestCart(guestId, request))
+                .build();
+    }
 
 }
