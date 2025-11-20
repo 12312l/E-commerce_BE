@@ -46,6 +46,9 @@ public class AuthenticationService {
     UserRepository userRepository;
     //    PasswordEncoder passwordEncoder;
     UserMapper userMapper;
+
+    CartService cartService;
+
     InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
@@ -87,6 +90,11 @@ public class AuthenticationService {
         }
 
         var token = generateToken(userMapper.toUserResponse(user));
+
+        if (authenticationRequest.getGuestId() != null) {
+            cartService.mergeGuestCartToUser(authenticationRequest.getGuestId(), user);
+        }
+
 
         return AuthenticationResponse.builder()
                 //                .role(user.getRoles().toString()) // vẫn giữ để trả về response

@@ -200,6 +200,54 @@ public class CartService {
     }
 
 
+    @Transactional
+    public void mergeGuestCartToUser(String guestId, User user) {
+
+        // Lấy list cart từ guest (List<CartResponse> hoặc List<CartRequest>)
+        List<CartRequest> guestItems = getGuestCart(guestId);
+        if (guestItems == null || guestItems.isEmpty()) return;
+
+        for (CartRequest item : guestItems) {
+
+            ProductVariant variant = productVariantRepository.findById(item.getVariantId())
+                    .orElseThrow(() -> new AppException(ErrorCode.VARIANT_NOT_FOUND));
+
+            // Tìm cart giống trong DB
+            Optional<Cart> existingCart =
+                    cartRepository.findByUser_UserIdAndProductVariant_VariantIdAndSize(
+                            user.getUserId(),
+                            item.getVariantId(),
+                            item.getSize()
+                    );
+
+            if (existingCart.isPresent()) {
+                // Đã tồn tại → cộng dồn
+                Cart cart = existingCart.get();
+                int newQuantity = cart.getQuantity() + item.getQuantity();
+                cart.setQuantity(newQuantity);
+                cart.setTotalPrice(variant.getProduct().getPrice() * newQuantity);
+                cartRepository.save(cart);
+
+            } else {
+                // Chưa có → tạo mới
+                Cart cart = new Cart();
+                cart.setUser(user);
+                cart.setProductVariant(variant);
+                cart.setSize(item.getSize());
+                cart.setQuantity(item.getQuantity());
+                cart.setTotalPrice(variant.getProduct().getPrice() * item.getQuantity());
+                cartRepository.save(cart);
+            }
+        }
+
+        // Xoá giỏ hàng khách sau khi merge
+        clearGuestCart(guestId);
+    }
+
+    public void clearGuestCart(String guestId) {
+        redisTemplate.delete(buildKey(guestId));
+    }
+
 
 
 
