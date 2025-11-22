@@ -16,4 +16,14 @@ public enum DeliveryMethod {
     public String getVietnamese() {
         return vietnamese;
     }
+
+    // Add method convert vietnamese → Enum
+    public static DeliveryMethod fromVietnamese(String text) {
+        for (DeliveryMethod dm : DeliveryMethod.values()) {
+            if (dm.vietnamese.equals(text)) {
+                return dm;
+            }
+        }
+        throw new IllegalArgumentException("Không tồn tại phương thức vận chuyển: " + text);
+    }
 }

@@ -20,5 +20,15 @@ public enum OrderStatus {
     public String getVietnamese() {
         return vietnamese;
     }
+
+    // Add method convert vietnamese → Enum
+    public static OrderStatus fromVietnamese(String text) {
+        for (OrderStatus os : OrderStatus.values()) {
+            if (os.vietnamese.equals(text)) {
+                return os;
+            }
+        }
+        throw new IllegalArgumentException("Không tồn tại trạng thái đặt hàng: " + text);
+    }
 }
 

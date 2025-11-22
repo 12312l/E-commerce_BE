@@ -18,5 +18,15 @@ public enum PaymentStatus {
     public String getVietnamese() {
         return vietnamese;
     }
+
+    // Add method convert vietnamese → Enum
+    public static PaymentStatus fromVietnamese(String text) {
+        for (PaymentStatus ps : PaymentStatus.values()) {
+            if (ps.vietnamese.equals(text)) {
+                return ps;
+            }
+        }
+        throw new IllegalArgumentException("Không tồn tại trạng thái thanh toán: " + text);
+    }
 }
 

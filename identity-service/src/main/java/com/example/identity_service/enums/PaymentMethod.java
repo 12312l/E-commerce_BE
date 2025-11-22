@@ -19,5 +19,17 @@ public enum PaymentMethod {
     public String getVietnamese() {
         return vietnamese;
     }
+
+    // Add method convert vietnamese → Enum
+    public static PaymentMethod fromVietnamese(String text) {
+        for (PaymentMethod pm : PaymentMethod.values()) {
+            if (pm.vietnamese.equals(text)) {
+                return pm;
+            }
+        }
+        throw new IllegalArgumentException("Không tồn tại phương thức thanh toán: " + text);
+    }
+
+
 }
 

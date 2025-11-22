@@ -20,7 +20,7 @@ public class OrderDetail {
 
     String size;
 
-    String color;
+    String colorName;
 
     Double price; // ✅ thêm nếu bạn muốn lưu giá tại thời điểm mua (tránh thay đổi theo giá gốc)
 

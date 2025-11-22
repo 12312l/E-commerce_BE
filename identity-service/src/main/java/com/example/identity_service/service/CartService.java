@@ -202,7 +202,6 @@ public class CartService {
 
     @Transactional
     public void mergeGuestCartToUser(String guestId, User user) {
-
         // Lấy list cart từ guest (List<CartResponse> hoặc List<CartRequest>)
         List<CartRequest> guestItems = getGuestCart(guestId);
         if (guestItems == null || guestItems.isEmpty()) return;
@@ -247,8 +246,4 @@ public class CartService {
     public void clearGuestCart(String guestId) {
         redisTemplate.delete(buildKey(guestId));
     }
-
-
-
-
 }
