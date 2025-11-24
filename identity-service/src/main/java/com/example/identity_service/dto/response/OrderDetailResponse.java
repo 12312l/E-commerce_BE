@@ -4,7 +4,6 @@ import com.example.identity_service.enums.DeliveryMethod;
 import com.example.identity_service.enums.OrderStatus;
 import com.example.identity_service.enums.PaymentMethod;
 import com.example.identity_service.enums.PaymentStatus;
-import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
@@ -18,16 +17,26 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderResponse {
+public class OrderDetailResponse {
     Long orderId;
 
     String orderCode;
 
     Double totalAmount;
 
+    PaymentStatus paymentStatus;
+
+    PaymentMethod paymentMethod;
+
+    DeliveryMethod deliveryMethod;
+
     OrderStatus orderStatus;
 
     LocalDateTime createAt;
+
+    String addressName;
+
+    String fullname;
 
     List<OrderItemResponse> items;
 }

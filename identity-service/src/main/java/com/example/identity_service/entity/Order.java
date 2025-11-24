@@ -1,6 +1,7 @@
 package com.example.identity_service.entity;
 
 import com.example.identity_service.enums.DeliveryMethod;
+import com.example.identity_service.enums.OrderStatus;
 import com.example.identity_service.enums.PaymentMethod;
 import com.example.identity_service.enums.PaymentStatus;
 import jakarta.persistence.*;
@@ -8,6 +9,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -36,7 +40,16 @@ public class Order {
     @Enumerated(EnumType.STRING)
     DeliveryMethod deliveryMethod;
 
+    @Enumerated(EnumType.STRING)
+    OrderStatus orderStatus;
+
     Double shippingFee;
+
+    LocalDateTime createAt;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<OrderDetail> orderDetails = new ArrayList<>();
+
 
     @ManyToOne(optional = false)
     @JoinColumn(name = ("userId") , nullable = false)
@@ -48,6 +61,8 @@ public class Order {
 
     @PrePersist
     public void generateOrderCode() {
+        this.createAt = LocalDateTime.now();
+
         if (this.orderCode == null) {
             String datePart = LocalDate.now().toString().replaceAll("-", ""); // 20251030
             String randomPart = UUID.randomUUID().toString().substring(0, 6).toUpperCase(); // 6 ký tự

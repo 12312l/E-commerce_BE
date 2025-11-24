@@ -46,7 +46,12 @@ public enum ErrorCode {
     INVALID_ACTION(7002, "Hành động không hợp lệ", HttpStatus.BAD_REQUEST),
 
     //color
-    COLOR_NOTFOUND(8001, "Không tìm thấy màu", HttpStatus.BAD_REQUEST);
+    COLOR_NOTFOUND(8001, "Không tìm thấy màu", HttpStatus.BAD_REQUEST),
+
+    //order
+    INVALID_QUANTITY(9001, "Số lượng không hợp lệ", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_EXSISTED(9002, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST)
+     ;
 
 
     ;

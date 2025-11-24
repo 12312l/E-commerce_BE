@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderItemRequest {
+public class OrderDetailRequest {
     Long variantId;
     Integer quantity;
     String size;
