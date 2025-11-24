@@ -1,29 +1,9 @@
 package com.example.identity_service.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum DeliveryMethod {
-    FAST("Giao hàng nhanh"),
-    EXPRESS("Giao hàng hỏa tốc");
-
-    private final String vietnamese;
-
-    DeliveryMethod(String vietnamese) {
-        this.vietnamese = vietnamese;
-    }
-
-    @JsonValue
-    public String getVietnamese() {
-        return vietnamese;
-    }
-
-    // Add method convert vietnamese → Enum
-    public static DeliveryMethod fromVietnamese(String text) {
-        for (DeliveryMethod dm : DeliveryMethod.values()) {
-            if (dm.vietnamese.equals(text)) {
-                return dm;
-            }
-        }
-        throw new IllegalArgumentException("Không tồn tại phương thức vận chuyển: " + text);
-    }
+    FAST,
+    EXPRESS
 }
