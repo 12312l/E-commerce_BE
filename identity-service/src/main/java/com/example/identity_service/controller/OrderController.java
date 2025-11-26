@@ -1,6 +1,7 @@
 package com.example.identity_service.controller;
 
 import com.example.identity_service.dto.request.ApiResponse;
+import com.example.identity_service.dto.request.EditOrderRequest;
 import com.example.identity_service.dto.request.OrderRequest;
 import com.example.identity_service.dto.response.OrderDetailResponse;
 import com.example.identity_service.dto.response.OrderResponse;
@@ -10,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +42,22 @@ public class OrderController {
     ApiResponse<OrderDetailResponse> getDetailOrder(@PathVariable("orderId") Long orderId){
         return ApiResponse.<OrderDetailResponse>builder()
                 .result(orderService.getOrderDetailResponse(orderId))
+                .build();
+    }
+
+    @PatchMapping("/{orderId}/cancel")
+    ApiResponse<OrderResponse> cancelOrder(@PathVariable Long orderId){
+        return ApiResponse.<OrderResponse>builder()
+                .result(orderService.cancelOrder(orderId))
+                .build();
+    }
+
+
+    @PatchMapping("/edit-order")
+    @PreAuthorize("hasRole('ADMIN')")
+    ApiResponse<OrderResponse> editOrder(@RequestBody EditOrderRequest editOrderRequest){
+        return ApiResponse.<OrderResponse>builder()
+                .result(orderService.editOrder(editOrderRequest))
                 .build();
     }
 }

@@ -1,10 +1,12 @@
 package com.example.identity_service.service;
 
+import com.example.identity_service.dto.request.EditOrderRequest;
 import com.example.identity_service.dto.request.OrderDetailRequest;
 import com.example.identity_service.dto.request.OrderRequest;
 import com.example.identity_service.dto.response.OrderDetailResponse;
 import com.example.identity_service.dto.response.OrderResponse;
 import com.example.identity_service.entity.*;
+import com.example.identity_service.enums.OrderStatus;
 import com.example.identity_service.exception.AppException;
 import com.example.identity_service.exception.ErrorCode;
 import com.example.identity_service.mapper.OrderDetailMapper;
@@ -19,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +89,85 @@ public class OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXSISTED));
 
         return orderMapper.toOrderDetailResponse(order);
-
     }
+
+    @Transactional
+    public OrderResponse cancelOrder(Long orderId){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOTFOUND));
+
+        Order order = orderRepository.findByUser_UserIdAndOrderId(user.getUserId(), orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXSISTED));
+
+        if(!order.getOrderStatus().equals(OrderStatus.PENDING)){
+            throw new AppException(ErrorCode.ORDER_CANNOT_CANCEL);
+        }
+
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        restoreQuantityStock(order);
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    @Transactional
+    public OrderResponse editOrder(EditOrderRequest editOrderRequest){
+        Order order = orderRepository.findById(editOrderRequest.getOrderId()).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXSISTED));
+
+        validateStatusTransition(order.getOrderStatus(), editOrderRequest.getOrderStatus());
+
+        if(editOrderRequest.getOrderStatus().equals(OrderStatus.CANCELLED)){
+            restoreQuantityStock(order);
+        }
+
+        order.setOrderStatus(editOrderRequest.getOrderStatus());
+        order.setPaymentStatus(editOrderRequest.getPaymentStatus());
+
+        return orderMapper.toOrderResponse(orderRepository.save(order));
+    }
+
+    private void validateStatusTransition(OrderStatus oldStatus, OrderStatus newStatus) {
+
+        if (oldStatus == newStatus) {
+            return;
+        }
+
+        switch (oldStatus) {
+
+            case PENDING:
+                if (newStatus != OrderStatus.PROCESSING &&
+                        newStatus != OrderStatus.CANCELLED) {
+                    throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+                }
+                break;
+
+            case PROCESSING:
+                if (newStatus != OrderStatus.SHIPPED) {
+                    throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+                }
+                break;
+
+            case SHIPPED:
+                if (newStatus != OrderStatus.DELIVERED) {
+                    throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+                }
+                break;
+
+            case DELIVERED:
+                throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+
+            case CANCELLED:
+                throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+
+            case RETURNED:
+                throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+        }
+    }
+
+    public void restoreQuantityStock(Order order){
+        for (OrderDetail detail : order.getOrderDetails()) {
+            ProductVariant variant = detail.getProductVariant();
+            variant.setStockQuantity(variant.getStockQuantity()+detail.getQuantity());
+            productVariantRepository.save(variant);
+        }
+    }
+
 }

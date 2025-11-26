@@ -50,7 +50,9 @@ public enum ErrorCode {
 
     //order
     INVALID_QUANTITY(9001, "Số lượng không hợp lệ", HttpStatus.BAD_REQUEST),
-    ORDER_NOT_EXSISTED(9002, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST)
+    ORDER_NOT_EXSISTED(9002, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_CANCEL(9003, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
+    INVALID_ORDER_STATUS(9004, "Lỗi trạng thái đơn hàng", HttpStatus.BAD_REQUEST),
      ;
 
 
