@@ -53,6 +53,9 @@ public enum ErrorCode {
     ORDER_NOT_EXSISTED(9002, "Đơn hàng không tồn tại", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_CANCEL(9003, "Không thể hủy đơn hàng", HttpStatus.BAD_REQUEST),
     INVALID_ORDER_STATUS(9004, "Lỗi trạng thái đơn hàng", HttpStatus.BAD_REQUEST),
+
+    //favorite
+    FAVOURITE_NOT_EXSISTED(1100,"Không tìm thấy sản phẩm yêu thích", HttpStatus.NOT_FOUND),
      ;
 
 
