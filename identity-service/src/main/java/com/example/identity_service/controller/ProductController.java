@@ -41,6 +41,13 @@ public class ProductController {
                 .build();
     }
 
+    @GetMapping("/best-seller")
+    ApiResponse<List<ProductResponse>> getBestSeller(){
+        return ApiResponse.<List<ProductResponse>>builder()
+                .result(productService.getBestSeller())
+                .build();
+    }
+
     @GetMapping("/genres/{genresId}")
     ApiResponse<List<ProductResponse>> getProductByGenresId(@PathVariable("genresId") Long genresId){
         return ApiResponse.<List<ProductResponse>>builder()
@@ -83,6 +90,5 @@ public class ProductController {
                 .result(productService.filterByPrice(priceFilterRequest))
                 .build();
     }
-
 
 }

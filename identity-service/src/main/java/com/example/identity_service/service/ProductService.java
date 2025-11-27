@@ -5,11 +5,13 @@ import com.example.identity_service.dto.request.ProductRequest;
 import com.example.identity_service.dto.response.ProductDetailResponse;
 import com.example.identity_service.dto.response.ProductResponse;
 import com.example.identity_service.entity.Genres;
+import com.example.identity_service.entity.Order;
 import com.example.identity_service.entity.Product;
 import com.example.identity_service.exception.AppException;
 import com.example.identity_service.exception.ErrorCode;
 import com.example.identity_service.mapper.ProductMapper;
 import com.example.identity_service.repository.GenresRepository;
+import com.example.identity_service.repository.OrderRepository;
 import com.example.identity_service.repository.ProductReponsitory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,6 +32,8 @@ public class ProductService {
     ProductMapper productMapper;
 
     GenresRepository genresRepository;
+
+    OrderRepository orderRepository;
 
     public ProductResponse createProduct(ProductRequest productRequest){
         Genres genre = genresRepository.findById(productRequest.getGenresId())
@@ -49,6 +54,21 @@ public class ProductService {
                 .toList();
     }
 
+    public List<ProductResponse> getNewProduct() {
+        return productReponsitory.findAllByOrderByCreateAtDesc()
+                .stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getBestSeller(){
+        List<Product> products = orderRepository.findBestSellingProducts();
+
+        return products.stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+    }
+
     public List<ProductResponse> getProductByGenresId(Long genresId){
         return productReponsitory.findAllByGenres_GenresId(genresId)
                 .stream()
@@ -64,15 +84,6 @@ public class ProductService {
         Product product = productReponsitory.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOTFOUND));
         return productMapper.toProductDetailResponse(product);
     }
-
-    public List<ProductResponse> getNewProduct() {
-        return productReponsitory.findAllByOrderByCreateAtDesc()
-                .stream()
-                .map(productMapper::toProductResponse)
-                .toList();
-    }
-
-
 
     public List<ProductResponse> searchProduct(String keyword){
         if(keyword ==null || keyword.trim().isEmpty()){
