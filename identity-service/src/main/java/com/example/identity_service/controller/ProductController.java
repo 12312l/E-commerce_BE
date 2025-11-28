@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,23 +36,33 @@ public class ProductController {
     }
 
     @GetMapping
-    ApiResponse<List<ProductResponse>> getAllProduct(){
-        return ApiResponse.<List<ProductResponse>>builder()
-                .result(productService.getAllProduct())
+    ApiResponse<Page<ProductResponse>> getAllProduct(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "24") int size
+    ){
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .result(productService.getAllProduct(page-1, size))
                 .build();
     }
 
     @GetMapping("/best-seller")
-    ApiResponse<List<ProductResponse>> getBestSeller(){
-        return ApiResponse.<List<ProductResponse>>builder()
-                .result(productService.getBestSeller())
+    ApiResponse<Page<ProductResponse>> getBestSeller(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "24") int size
+    ){
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .result(productService.getBestSeller(page-1, size))
                 .build();
     }
 
     @GetMapping("/genres/{genresId}")
-    ApiResponse<List<ProductResponse>> getProductByGenresId(@PathVariable("genresId") Long genresId){
-        return ApiResponse.<List<ProductResponse>>builder()
-                .result(productService.getProductByGenresId(genresId))
+    ApiResponse<Page<ProductResponse>> getProductByGenresId(
+            @PathVariable("genresId") Long genresId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "24") int size
+    ){
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .result(productService.getProductByGenresId(genresId, page-1, size))
                 .build();
     }
 
@@ -70,9 +81,12 @@ public class ProductController {
     }
 
     @GetMapping("/newProduct")
-    ApiResponse<List<ProductResponse>> getNewProduct(){
-        return ApiResponse.<List<ProductResponse>>builder()
-                .result(productService.getNewProduct())
+    ApiResponse<Page<ProductResponse>> getNewProduct(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "24") int size
+    ){
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .result(productService.getNewProduct(page-1, size))
                 .build();
     }
 

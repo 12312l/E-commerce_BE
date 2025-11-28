@@ -16,6 +16,9 @@ import com.example.identity_service.repository.ProductReponsitory;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,33 +50,31 @@ public class ProductService {
         return productMapper.toProductResponse(productReponsitory.save(product));
     }
 
-    public List<ProductResponse> getAllProduct(){
-        return productReponsitory.findAll()
-                .stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+    public Page<ProductResponse> getAllProduct(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productReponsitory.findAll(pageable)
+                .map(productMapper::toProductResponse);
     }
 
-    public List<ProductResponse> getNewProduct() {
-        return productReponsitory.findAllByOrderByCreateAtDesc()
-                .stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+    public Page<ProductResponse> getNewProduct(int page, int size) {
+        Pageable pageable= PageRequest.of(page, size);
+
+        return productReponsitory.findAllByOrderByCreateAtDesc(pageable)
+                .map(productMapper::toProductResponse);
     }
 
-    public List<ProductResponse> getBestSeller(){
-        List<Product> products = orderRepository.findBestSellingProducts();
+    public Page<ProductResponse> getBestSeller(int page, int size){
+        Pageable pageable= PageRequest.of(page, size);
+        Page<Product> products = orderRepository.findBestSellingProducts(pageable);
 
-        return products.stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+        return products.map(productMapper::toProductResponse);
     }
 
-    public List<ProductResponse> getProductByGenresId(Long genresId){
-        return productReponsitory.findAllByGenres_GenresId(genresId)
-                .stream()
-                .map(productMapper::toProductResponse)
-                .toList();
+    public Page<ProductResponse> getProductByGenresId(Long genresId, int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        return productReponsitory.findAllByGenres_GenresId(genresId, pageable)
+                .map(productMapper::toProductResponse);
     }
 
     public ProductResponse getProductById(Long id){
